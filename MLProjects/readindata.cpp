@@ -267,7 +267,7 @@ int readindata::bestAttr()
 			maxIn=remainAttr[i];
 		}
 
-		cout<<attrName[remainAttr[i]]<<" : "<<x<<endl;
+		//cout<<attrName[remainAttr[i]]<<" : "<<x<<endl;
 
 	}
 	return  maxIn;
