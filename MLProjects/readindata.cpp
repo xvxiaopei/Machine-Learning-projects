@@ -79,19 +79,27 @@ readindata::readindata(string datacon)
         exit(1); // terminate with error  
 	}  
 
-	while(getline(datafile,attr)) //按行读取 
+	int c=0;
+	//cout<<numOfTuple<<endl;
+	while(getline(datafile,attr)&&c<numOfTuple) //按行读取 
 	{
+		//cout<<attr<<endl;
+		c++;
 		stringstream a(attr);
 		x=new vector<string>();
 		while(getline(a,t,',')) //把流按分隔符实现分割 
 		{
 			x->push_back(t);
 		}
+		//if(c>12950) 
+		//cout<<attr<<endl;
 		count(*x,targetAttr,numOfTar);
 
 		data.push_back(*x);
 	}
 
+
+	//cout<<targetAttr<<" : "<<attrVal.size()<<endl;
 	/*
 	for(int i=0;i<n;i++)cout<<numOfTar[i]<<' ';
 	cout<<endl;
@@ -153,6 +161,13 @@ void readindata::count(vector<string> t,int attr,int *num)      //count the numb
 {
 	bool a=false;
 	//cout<<t[attr]<<endl;
+	/*
+	if(attr>=t.size())
+	{cout<<t.size()<<endl;
+		for(int i=0;i<t.size();i++) cout<<t[i]<<" ";
+		cout<<endl;
+	}
+	*/
 	for(int i=0;i<attrVal[attr].size();i++)
 	{
 		
@@ -247,7 +262,11 @@ double readindata::infoGain(int attr)
 	vector<readindata> vs=vsplit(attr);
 	//for(int i=0;i<vs.size();i++)	vs[i].printData();
 	double sum=0;
-	for(int i=0;i<vs.size();i++)  sum+= ((double)(vs[i].numOfTuple)/(double)numOfTuple)*vs[i].entropy();
+	for(int i=0;i<vs.size();i++)  {
+		if(vs[i].numOfTuple==0) continue;
+		sum+= ((double)(vs[i].numOfTuple)/(double)numOfTuple)*vs[i].entropy();
+		//cout<<sum<<' ';
+	}
 	//cout<<"sum = "<<sum<<endl;
 	return entropy()-sum;
 
@@ -256,11 +275,12 @@ double readindata::infoGain(int attr)
 
 int readindata::bestAttr()
 {
-	double max=0;
+	double max=-1;
 	int maxIn=-1;
 	for(int i=0;i<remainAttr.size();i++)
 	{
 		double x=infoGain(remainAttr[i]);
+		//cout<<x<<' ';
 		if(max<x) 
 		{
 			max=x;
@@ -270,6 +290,7 @@ int readindata::bestAttr()
 		//cout<<attrName[remainAttr[i]]<<" : "<<x<<endl;
 
 	}
+	//cout<<endl;
 	return  maxIn;
 }
 
@@ -278,18 +299,22 @@ vector<readindata> readindata::split(int attr)
 {
 	readindata* x;
 	vector<readindata> res;
+	//cout<<"split ";
+	//cout<<attr<<endl;
 	for(int i=0;i<attrVal[attr].size();i++)
 	{
+		//cout<<i;
 		x=new readindata();
 		x->numOfTuple=0;
 		x->numOfAttr=numOfAttr;
 		x->attrName=attrName;
 		x->attrVal=attrVal;
 		x->targetAttr=targetAttr;
+		
 		int n=attrVal[targetAttr].size();
 	    x->numOfTar=new int[n];
-	    for(int i=0;i<n;i++)   x->numOfTar[i]=0;
-
+		for(int j=0;j<n;j++)   {x->numOfTar[j]=0;}
+		
 		for(int j=0;j<remainAttr.size();j++)
 		{
 			if(attr!=remainAttr[j])x->remainAttr.push_back(remainAttr[j]);
@@ -297,7 +322,7 @@ vector<readindata> readindata::split(int attr)
 		res.push_back(*x);
 
 	}
-
+	//cout<<"!"<<endl;
 	for(int i=0;i<numOfTuple;i++)
 	{
 		
