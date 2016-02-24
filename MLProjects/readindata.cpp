@@ -341,3 +341,55 @@ vector<readindata> readindata::split(int attr)
 
 	return res;
 }
+
+
+vector<readindata> readindata::divide(int c)
+{
+	readindata* x;
+	vector<readindata> res;
+	
+	//cout<<"split ";
+	//cout<<attr<<endl;
+	for(int i=0;i<3;i++)
+	{
+		//cout<<i;
+		x=new readindata();
+		x->numOfTuple=0;
+		x->numOfAttr=numOfAttr;
+		x->attrName=attrName;
+		x->attrVal=attrVal;
+		x->targetAttr=targetAttr;
+		
+		int n=attrVal[targetAttr].size();
+	    x->numOfTar=new int[n];
+		for(int j=0;j<n;j++)   {x->numOfTar[j]=0;}
+		
+		for(int j=0;j<remainAttr.size();j++)
+		{
+			x->remainAttr.push_back(remainAttr[j]);
+		}
+		res.push_back(*x);
+
+	}
+	//cout<<"!"<<endl;
+	for(int i=0;i<numOfTuple;i++)
+	{
+		int j=0;
+		if((i>=(numOfTuple/10) *c)&&(i<(numOfTuple/10) *(c+1))) j=2;   //test set
+
+
+		else if(res[0].numOfTuple<numOfTuple*0.6)       //training
+		{
+			j=0;
+		}
+		else j=1;   //validation set
+
+
+		res[j].numOfTuple++;
+		res[j].count(data[i],targetAttr,res[j].numOfTar);
+		res[j].data.push_back(data[i]);
+	}
+
+	return res;
+
+}

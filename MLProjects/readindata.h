@@ -9,6 +9,7 @@
 #include <sstream>
 #include <algorithm>
 #include <cmath>
+ #include <ctime> 
 using namespace std;
 
 class readindata{
@@ -47,6 +48,7 @@ public:
 
 	vector<readindata> split(int attr);       //really split
 
+	vector<readindata> divide(int c);             //60% training set, 30% validation set, 10% test set(10 fold), c=0,1,2....9
 
 }
 ;
